@@ -1,11 +1,5 @@
-<!-- login.ejs -->
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Login</title>
-</head>
-<body>
-    <p>Log In</p>
+<%- include("templates/header") %>
+    Log In
     <form action="/loginSubmit" method="post">
         <input name="email" type="email" placeholder="email">
         <br>
@@ -13,5 +7,4 @@
         <br>
         <button>Submit</button>
     </form>
-</body>
-</html>
+<%- include("templates/footer") %>

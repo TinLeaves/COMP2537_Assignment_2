@@ -1,3 +1,4 @@
+<%- include("templates/header") %>
 <% if (authenticated) { %>
     <p>Hello, <%= username %>.</p>
     <a href="/members"><button>Go to Members Area</button></a><br>
@@ -6,3 +7,4 @@
     <a href="/signup"><button>Sign Up</button></a><br>
     <a href="/login"><button>Log In</button></a>   
 <% } %>
+<%- include("templates/footer") %>

@@ -98,20 +98,24 @@ app.get('/logout', (req, res) => {
     res.redirect('/');
 });
 
+// app.get('/signup', (req, res) => {
+//     var html = `
+//     create user
+//     <form action='/signupSubmit' method='post'>
+//     <input name='username' type='text' placeholder='name'>
+//     <br>
+//     <input name='email' type='email' placeholder='email'>
+//     <br>
+//     <input name='password' type='password' placeholder='password'>
+//     <br>
+//     <button>Submit</button>
+//     </form>
+//     `;
+//     res.send(html);
+// });
+
 app.get('/signup', (req, res) => {
-    var html = `
-    create user
-    <form action='/signupSubmit' method='post'>
-    <input name='username' type='text' placeholder='name'>
-    <br>
-    <input name='email' type='email' placeholder='email'>
-    <br>
-    <input name='password' type='password' placeholder='password'>
-    <br>
-    <button>Submit</button>
-    </form>
-    `;
-    res.send(html);
+    res.render('signup');
 });
 
 app.post('/signupSubmit', async (req, res) => {
@@ -165,19 +169,24 @@ app.post('/signupSubmit', async (req, res) => {
     res.redirect("/members");
 });
 
+// app.get('/login', (req, res) => {
+//     var html = `
+//     log in
+//     <form action='/loginSubmit' method='post'>
+//     <input name='email' type='email' placeholder='email'>
+//     <br>
+//     <input name='password' type='password' placeholder='password'>
+//     <br>
+//     <button>Submit</button>
+//     </form>
+//     `;
+//     res.send(html);
+// });
+
 app.get('/login', (req, res) => {
-    var html = `
-    log in
-    <form action='/loginSubmit' method='post'>
-    <input name='email' type='email' placeholder='email'>
-    <br>
-    <input name='password' type='password' placeholder='password'>
-    <br>
-    <button>Submit</button>
-    </form>
-    `;
-    res.send(html);
+    res.render('login');
 });
+
 
 app.post('/loginSubmit', async (req, res) => {
     // extract email and password from request body

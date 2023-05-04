@@ -15,6 +15,8 @@ const Joi = require("joi");
 
 app.use('/public', express.static('public'));
 
+app.set('view engine', 'ejs');
+
 const expireTime = 1 * 60 * 60 * 1000; //expires after 1 hour  (hours * minutes * seconds * millis)
 
 /* secret information section */
@@ -48,21 +50,29 @@ app.use(session({
 }
 ));
 
-app.get('/', (req, res) => {
-    if (req.session.authenticated) {
-        res.send(`
-            <p>Hello, ${req.session.username}.</p>
-            <a href="/members"><button>Go to Members Area</button></a><br>
-            <a href="/logout"><button>Logout</button></a>
-        `);
-    } else {
-        res.send(`
-            <a href="/signup"><button>Sign Up</button></a><br>
-            <a href="/login"><button>Log In</button></a>
+// app.get('/', (req, res) => {
+//     if (req.session.authenticated) {
+//         res.send(`
+//             <p>Hello, ${req.session.username}.</p>
+//             <a href="/members"><button>Go to Members Area</button></a><br>
+//             <a href="/logout"><button>Logout</button></a>
+//         `);
+//     } else {
+//         res.send(`
+//             <a href="/signup"><button>Sign Up</button></a><br>
+//             <a href="/login"><button>Log In</button></a>
                
-        `);
-    }
+//         `);
+//     }
+// });
+
+app.get('/', (req, res) => {
+    const authenticated = req.session.authenticated;
+    const username = req.session.username;
+
+    res.render('index', { authenticated, username });
 });
+
 
 app.get('/members', (req, res) => {
     if (!req.session.authenticated) {

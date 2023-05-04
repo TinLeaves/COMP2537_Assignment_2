@@ -1,0 +1,8 @@
+<% if (authenticated) { %>
+    <p>Hello, <%= username %>.</p>
+    <a href="/members"><button>Go to Members Area</button></a><br>
+    <a href="/logout"><button>Logout</button></a>
+<% } else { %>
+    <a href="/signup"><button>Sign Up</button></a><br>
+    <a href="/login"><button>Log In</button></a>   
+<% } %>

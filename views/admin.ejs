@@ -1,12 +1,10 @@
 <%- include("templates/header") %>
-<h1>User List</h1>
+<div>Users:</div>
 <ul>
-    <% users.forEach(user => { %>
-        <li>
-            <%= user.username %> (<%= user.role %>)
-            <a href="/admin/promote?user=<%= user.username %>">Promote to Admin</a>
-            <a href="/admin/demote?user=<%= user.username %>">Demote to User</a>
-        </li>
-    <% }) %>
+    <% let i=0; %>
+    <% for(i=0; i < users.length; i++) { %>
+        <%- include('templates/user', {user: users[i]}) %> 
+    <% } %>
 </ul>
 <%- include("templates/footer") %>
+

@@ -35,7 +35,8 @@ const { database } = require('./databaseConnection');
 
 const userCollection = database.db(mongodb_database).collection('users');
 
-const { ObjectId } = require('mongodb');
+// const { ObjectId } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 
 app.use(express.urlencoded({ extended: false }));
 
@@ -162,22 +163,30 @@ app.post('/signupSubmit', async (req, res) => {
       return;
   }
 
-   // Check if username already exists
-   const existingUser = await userCollection.findOne({ username });
-   if (existingUser) {
-     res.send("Username already exists. <br><a href='/signup'>Try again</a>");
-     return;
-   }
+  // Check if username already exists
+  const existingUser = await userCollection.findOne({ username: { $eq: username } });
+  if (existingUser) {
+    res.send("Username already exists. <br><a href='/signup'>Try again</a>");
+    return;
+  }
 
   var hashedPassword = await bcrypt.hash(password, saltRounds);
 
-  // Add user to MongoDB database
-  await userCollection.insertOne({
-    username: username,
-    email: email,
-    password: hashedPassword,
-    role: "user", // Assigning a default role of "user"
-  });
+  // // Add user to MongoDB database
+  // await userCollection.insertOne({
+  //   username: username,
+  //   email: email,
+  //   password: hashedPassword,
+  //   role: "user", // Assigning a default role of "user"
+  // });
+
+    // Add user to MongoDB database using parameterized query
+    await userCollection.insertOne({
+      username,
+      email,
+      password: hashedPassword,
+      role: "user", // Assigning a default role of "user"
+    });
 
   console.log("Inserted user");
 
@@ -239,17 +248,24 @@ app.get('/admin', sessionValidation, adminAuthorization, async (req, res) => {
   res.render("admin", { users: result });
 });
 
-app.get('/admin/demote', (req,res) => {
+app.get('/admin/demote', async (req, res) => {
   var user = req.query.user;
-  userCollection.updateOne({username:user}, {$set: {role:"user"}});
+
+  // Update user's role using parameterized query
+  await userCollection.updateOne({ username: { $eq: user } }, { $set: { role: "user" } });
+
   res.redirect("/admin");
 });
 
-app.get('/admin/promote', (req,res) => {
+app.get('/admin/promote', async (req, res) => {
   var user = req.query.user;
-  userCollection.updateOne({username:user}, {$set: {role:"admin"}});
+
+  // Update user's role using parameterized query
+  await userCollection.updateOne({ username: { $eq: user } }, { $set: { role: "admin" } });
+
   res.redirect("/admin");
 });
+
 
 app.use(express.static(__dirname + "/public"));
 

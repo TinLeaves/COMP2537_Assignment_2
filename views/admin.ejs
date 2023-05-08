@@ -1,0 +1,12 @@
+<%- include("templates/header") %>
+<h1>User List</h1>
+<ul>
+    <% users.forEach(user => { %>
+        <li>
+            <%= user.username %> (<%= user.role %>)
+            <a href="/admin/promote?user=<%= user.username %>">Promote to Admin</a>
+            <a href="/admin/demote?user=<%= user.username %>">Demote to User</a>
+        </li>
+    <% }) %>
+</ul>
+<%- include("templates/footer") %>

@@ -71,9 +71,8 @@ function sessionValidation(req, res, next) {
   }
 }
 
-
 function isAdmin(req) {
-  if (req.session.role == 'admin') {
+  if (req.session.user_type == 'admin') {
     return true;
   }
   return false;
@@ -82,7 +81,7 @@ function isAdmin(req) {
 function adminAuthorization(req, res, next) {
   if (!isAdmin(req)) {
     res.status(403);
-    res.render("errorMessage", { error: "Not Authorized" });
+    res.render("403", { error: "Not Authorized" });
     return;
   }
   else {
@@ -97,18 +96,17 @@ app.get('/', (req, res) => {
   res.render('index', { authenticated, username });
 });
 
-
 app.get('/members', (req, res) => {
-    if (!req.session.authenticated) {
-        res.redirect('/login');
-        return;
-    }
+  if (!req.session.authenticated) {
+    res.redirect('/login');
+    return;
+  }
 
-    const images = ['atSad.gif', 'atVibe.gif', 'atSoupMe.gif'];
-    const randomIndex = Math.floor(Math.random() * images.length);
-    const randomImage = '/public/' + images[randomIndex];
+  const images = ['atSad.gif', 'atVibe.gif', 'atSoupMe.gif'];
+  const randomIndex = Math.floor(Math.random() * images.length);
+  const randomImage = '/public/' + images[randomIndex];
 
-    res.send(`
+  res.send(`
       <h1>Hello, ${req.session.username}.</h1>
       <img src="${randomImage}">
       <form action="/logout" method="GET">
@@ -131,62 +129,54 @@ app.post('/signupSubmit', async (req, res) => {
   var email = req.body.email;
   var password = req.body.password;
 
-  // Check for empty fields
-  let errorMsg = "";
-  if (!username) {
-      errorMsg += "Name is required. <br>";
-  }
-  if (!email) {
-      errorMsg += "Email is required. <br>";
-  }
-  if (!password) {
-      errorMsg += "Password is required. <br>";
-  }
-  if (errorMsg !== "") {
-      errorMsg += "<br><a href='/signup'>Try again</a>";
-      res.send(errorMsg);
-      return;
-  }
+// Check for empty fields
+let errorMsg = "";
+if (!username) {
+  errorMsg += "Name is required.";
+}
+if (!email) {
+  errorMsg += "Email is required.";
+}
+if (!password) {
+  errorMsg += "Password is required.";
+}
+if (errorMsg !== "") {
+  res.render('signupSubmit', { errorMsg: errorMsg });
+  return;
+}
 
   // Validate inputs using Joi
   const schema = Joi.object(
-      {
-          username: Joi.string().alphanum().max(20).required(),
-          email: Joi.string().email().required(),
-          password: Joi.string().max(20).required()
-      });
+    {
+      username: Joi.string().alphanum().max(20).required(),
+      email: Joi.string().email().required(),
+      password: Joi.string().max(20).required()
+    });
 
   const validationResult = schema.validate({ username, email, password });
   if (validationResult.error != null) {
-      console.log(validationResult.error);
-      res.redirect("/signup");
-      return;
+    console.log(validationResult.error);
+    res.redirect("/signup");
+    return;
   }
 
   // Check if username already exists
   const existingUser = await userCollection.findOne({ username: { $eq: username } });
   if (existingUser) {
-    res.send("Username already exists. <br><a href='/signup'>Try again</a>");
+    const errorMsg = "Username already exists.";
+    res.render('signupSubmit', { errorMsg: errorMsg });
     return;
   }
 
   var hashedPassword = await bcrypt.hash(password, saltRounds);
 
-  // // Add user to MongoDB database
-  // await userCollection.insertOne({
-  //   username: username,
-  //   email: email,
-  //   password: hashedPassword,
-  //   role: "user", // Assigning a default role of "user"
-  // });
-
-    // Add user to MongoDB database using parameterized query
-    await userCollection.insertOne({
-      username,
-      email,
-      password: hashedPassword,
-      role: "user", // Assigning a default role of "user"
-    });
+  // Add user to MongoDB database using parameterized query
+  await userCollection.insertOne({
+    username,
+    email,
+    password: hashedPassword,
+    user_type: "user", // Assigning a default user_type of "user"
+  });
 
   console.log("Inserted user");
 
@@ -194,7 +184,7 @@ app.post('/signupSubmit', async (req, res) => {
   req.session.authenticated = true;
   req.session.username = username;
   req.session.email = email;
-  req.session.role = "user";
+  req.session.user_type = "user";
 
   res.redirect("/members");
 });
@@ -211,39 +201,52 @@ app.post('/loginSubmit', async (req, res) => {
   const emailSchema = Joi.string().email().required();
   const emailValidationResult = emailSchema.validate(email);
   if (emailValidationResult.error != null) {
-      console.log(emailValidationResult.error);
-      res.redirect('/login');
-      return;
+    console.log(emailValidationResult.error);
+    res.redirect('/login');
+    return;
   }
 
   // find user in database using email
   const user = await userCollection.findOne({ email });
   if (!user) {
-      console.log('invalid email/password combination');
-      res.send('Invalid email/password combination. <br><a href="/login">Try again</a>');
-      return;
+    console.log('invalid email/password combination');
+    const errorMsg = 'Invalid email/password combination.';
+    res.render('loginSubmit', { errorMsg: errorMsg });
+    return;
   }
 
   // compare password with stored BCrypted password
   const isPasswordMatch = await bcrypt.compare(password, user.password);
   if (!isPasswordMatch) {
-      console.log('password is incorrect');
-      res.send('Password is incorrect. <br><a href="/login">Try again</a>');
-      return;
+    console.log('password is incorrect');
+    const errorMsg = 'Password is incorrect.';
+    res.render('loginSubmit', { errorMsg: errorMsg });
+    return;
   }
 
   // store username in session
   req.session.authenticated = true;
   req.session.username = user.username;
   req.session.cookie.maxAge = expireTime;
-  req.session.role = user.role;
+  req.session.user_type = user.user_type;
 
   // redirect to members page
   res.redirect('/members');
 });
 
 app.get('/admin', sessionValidation, adminAuthorization, async (req, res) => {
-  const result = await userCollection.find({}, { projection: { username: 1, role: 1 } }).toArray();
+  if (!req.session.authenticated) {
+    res.redirect('/login');
+    return;
+  }
+
+  if (!isAdmin(req)) {
+    res.status(403);
+    res.render("403", { error: "Not Authorized" });
+    return;
+  }
+
+  const result = await userCollection.find({}, { projection: { username: 1, user_type: 1 } }).toArray();
 
   res.render("admin", { users: result });
 });
@@ -251,8 +254,8 @@ app.get('/admin', sessionValidation, adminAuthorization, async (req, res) => {
 app.get('/admin/demote', async (req, res) => {
   var user = req.query.user;
 
-  // Update user's role using parameterized query
-  await userCollection.updateOne({ username: { $eq: user } }, { $set: { role: "user" } });
+  // Update user'a user_type using parameterized query
+  await userCollection.updateOne({ username: { $eq: user } }, { $set: { user_type: "user" } });
 
   res.redirect("/admin");
 });
@@ -260,12 +263,11 @@ app.get('/admin/demote', async (req, res) => {
 app.get('/admin/promote', async (req, res) => {
   var user = req.query.user;
 
-  // Update user's role using parameterized query
-  await userCollection.updateOne({ username: { $eq: user } }, { $set: { role: "admin" } });
+  // Update user's user_type using parameterized query
+  await userCollection.updateOne({ username: { $eq: user } }, { $set: { user_type: "admin" } });
 
   res.redirect("/admin");
 });
-
 
 app.use(express.static(__dirname + "/public"));
 
@@ -277,4 +279,3 @@ app.get("*", (req, res) => {
 app.listen(port, () => {
   console.log("Node application listening on port " + port);
 });
-

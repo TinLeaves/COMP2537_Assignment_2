@@ -1,5 +1,5 @@
 <li>
-    <%= user.username %> (<%= user.role %>)
+    <%= user.username %> (<%= user.user_type %>)
     <a href="/admin/promote?user=<%= user.username %>">Promote to Admin</a>
     <a href="/admin/demote?user=<%= user.username %>">Demote to User</a>
 </li>

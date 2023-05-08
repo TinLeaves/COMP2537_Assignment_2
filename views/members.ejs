@@ -1,0 +1,7 @@
+<%- include("templates/header") %>
+    <h1>Hello, <%= username %>.</h1>
+    <img src="<%= randomImage %>">
+    <form action="/logout" method="GET">
+        <button type="submit">Sign out</button>
+    </form>
+<%- include("templates/footer") %>

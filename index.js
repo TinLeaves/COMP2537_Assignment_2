@@ -96,25 +96,6 @@ app.get('/', (req, res) => {
   res.render('index', { authenticated, username });
 });
 
-// app.get('/members', (req, res) => {
-//   if (!req.session.authenticated) {
-//     res.redirect('/login');
-//     return;
-//   }
-
-//   const images = ['atSad.gif', 'atVibe.gif', 'atSoupMe.gif'];
-//   const randomIndex = Math.floor(Math.random() * images.length);
-//   const randomImage = '/public/' + images[randomIndex];
-
-//   res.send(`
-//       <h1>Hello, ${req.session.username}.</h1>
-//       <img src="${randomImage}">
-//       <form action="/logout" method="GET">
-//         <button type="submit">Sign out</button>
-//       </form>
-//     `);
-// });
-
 app.get('/members', (req, res) => {
   if (!req.session.authenticated) {
     res.redirect('/login');

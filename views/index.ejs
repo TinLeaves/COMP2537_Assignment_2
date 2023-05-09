@@ -1,10 +1,39 @@
 <%- include("templates/header") %>
-<% if (authenticated) { %>
-    <p>Hello, <%= username %>.</p>
-    <a href="/members"><button>Go to Members Area</button></a><br>
-    <a href="/logout"><button>Logout</button></a>
-<% } else { %>
-    <a href="/signup"><button>Sign Up</button></a><br>
-    <a href="/login"><button>Log In</button></a>   
-<% } %>
+
+  <% if (authenticated) { %>
+    <div class="px-4 pt-5 my-5 text-center border-bottom">
+        <h1 class="display-4 fw-bold text-body-emphasis">Hello, <%= username %>.</h1>
+        <div class="col-lg-6 mx-auto">
+          <p class="lead mb-4"></p>
+          <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
+            <a href="/members" class="btn btn-primary btn-lg px-4 me-sm-3">Go to Members Area</a>
+            <a href="/logout" class="btn btn-outline-secondary btn-lg px-4">Logout</a>
+          </div>
+        </div>
+        <div class="overflow-hidden" style="max-height: 30vh;">
+          <div class="container px-5">
+            <img src="atEat.gif" class="img-fluid border rounded-3 shadow-lg mb-4" alt="Example image" width="700" height="500" loading="lazy">
+          </div>
+        </div>
+      </div>
+  <% } else { %>
+    <div class="px-4 pt-5 my-5 text-center border-bottom">
+      <h1 class="display-4 fw-bold text-body-emphasis">Welcome to Assignment 2</h1>
+      <div class="col-lg-6 mx-auto">
+        <p class="lead mb-4">“Dude, suckin’ at something is the first step to being sorta good at something.”
+            <br>― Jake the Dog</p>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
+          <a href="/login" class="btn btn-primary btn-lg px-4 me-sm-3">Log in</a>
+          <a href="/signup" class="btn btn-outline-secondary btn-lg px-4">Sign up</a>
+        </div>
+      </div>
+      <div class="overflow-hidden" style="max-height: 30vh;">
+        <div class="container px-5">
+          <img src="atEat.gif" class="img-fluid border rounded-3 shadow-lg mb-4" alt="Example image" width="700" height="500" loading="lazy">
+        </div>
+      </div>
+    </div>
+  <% } %>
+
 <%- include("templates/footer") %>
+

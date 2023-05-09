@@ -1,7 +1,19 @@
-<%- include("templates/header") %>
+<!-- <%- include("templates/header") %>
     <h1>Hello, <%= username %>.</h1>
     <img src="<%= randomImage %>">
     <form action="/logout" method="GET">
         <button type="submit">Sign out</button>
     </form>
+<%- include("templates/footer") %> -->
+
+<%- include("templates/header") %>
+
+<div class="container">
+  <h1>Hello, <%= username %>.</h1>
+
+  <form action="/logout" method="GET">
+    <button type="submit" class="btn btn-primary mt-4">Sign out</button>
+  </form>
+</div>
+
 <%- include("templates/footer") %>

@@ -1,4 +1,11 @@
 <%- include("templates/header") %>
-  <p><%= errorMsg %></p>
-  <a href="/signup">Try again</a>
+<div class="container-fluid d-flex justify-content-center align-items-center vh-100">
+  <div class="square p-4">
+    <h2 class="text-center mb-4">Error</h2>
+    <p class="text-center"><%= errorMsg %></p>
+    <div class="text-center">
+      <a href="/signup" class="btn btn-primary">Try Again</a>
+    </div>
+  </div>
+</div>
 <%- include("templates/footer") %>

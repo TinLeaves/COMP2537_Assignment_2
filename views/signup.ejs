@@ -1,12 +1,22 @@
 <%- include("templates/header") %>
-create user
-<form action='/signupSubmit' method='post'>
-    <input name='username' type='text' placeholder='username'>
-    <br>
-    <input name='email' type='email' placeholder='email'>
-    <br>
-    <input name='password' type='password' placeholder='password'>
-    <br>
-    <button>Submit</button>
-</form>
+<div class="container-fluid d-flex justify-content-center align-items-center vh-100">
+  <div class="square p-4">
+    <h2 class="text-center mb-4">Create User</h2>
+    <form action="/signupSubmit" method="post">
+      <div class="mb-3">
+        <input name="username" type="text" class="form-control" placeholder="Username">
+      </div>
+      <div class="mb-3">
+        <input name="email" type="email" class="form-control" placeholder="Email address">
+      </div>
+      <div class="mb-3">
+        <input name="password" type="password" class="form-control" placeholder="Password">
+      </div>
+      <div class="text-center">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </form>
+  </div>
+</div>
 <%- include("templates/footer") %>
+
